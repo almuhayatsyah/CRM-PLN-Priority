@@ -1,0 +1,89 @@
+:root {
+    --pln-blue: #009fe3;
+    --pln-yellow: #ffe600;
+    --pln-dark: #000000;
+    --pln-white: #ffffff;
+    --pln-gradient: linear-gradient(135deg, #009fe3 0%, #ffe600 100%);
+}
+#sidebar-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 260px;
+    background: var(--pln-gradient);
+    color: var(--pln-dark);
+    box-shadow: 2px 0 16px 0 rgba(0, 0, 0, 0.08);
+    border-top-right-radius: 24px;
+    border-bottom-right-radius: 24px;
+    transition: all 0.3s;
+    z-index: 1040;
+    display: flex;
+    flex-direction: column;
+}
+.sidebar-heading {
+    background: rgba(255, 255, 255, 0.85);
+    color: var(--pln-dark);
+    border-radius: 16px;
+    margin: 18px 16px 12px 16px;
+    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.04);
+    flex-shrink: 0;
+}
+.list-group.list-group-flush {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    min-height: 0;
+    padding-bottom: 16px;
+}
+.sidebar-logo {
+    background: var(--pln-white);
+    border-radius: 12px;
+    padding: 8px;
+    margin-bottom: 8px;
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.06);
+}
+.list-group-item {
+    background: transparent;
+    color: var(--pln-dark);
+    border: none;
+    border-radius: 8px;
+    margin: 2px 8px;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.list-group-item.active,
+.list-group-item:active,
+.list-group-item:hover {
+    background: var(--pln-blue);
+    color: var(--pln-white) !important;
+    box-shadow: 0 2px 8px 0 rgba(0, 159, 227, 0.1);
+}
+.list-group-item i {
+    color: var(--pln-blue);
+    transition: color 0.2s;
+}
+.list-group-item.active i,
+.list-group-item:active i,
+.list-group-item:hover i {
+    color: var(--pln-yellow);
+}
+.collapse .list-group-item {
+    font-size: 0.97em;
+    padding-left: 2.5rem;
+}
+.dropdown-divider {
+    margin: 16px 0 8px 0;
+    border-top: 2px solid var(--pln-yellow);
+    opacity: 0.7;
+}
+@media (max-width: 991.98px) {
+    #sidebar-wrapper {
+        width: 100vw;
+        border-radius: 0;
+        position: static;
+        height: auto;
+    }
+    #page-content-wrapper {
+        margin-left: 0 !important;
+    }
+}
