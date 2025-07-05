@@ -11,7 +11,6 @@ class Pelanggan extends Model
     protected $table = 'pelanggan';
     protected $fillable = [
         'id_pel',
-        'user_id',
         'kode_PLN',
         'nama_perusahaan',
         'nama',
@@ -22,6 +21,7 @@ class Pelanggan extends Model
         'up3',
         'ulp',
         'kriteria_prioritas',
+        'user_id'
     ];
 
     // ENUM options for sektor

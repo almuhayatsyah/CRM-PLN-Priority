@@ -3,26 +3,24 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Pelanggan;
-use Illuminate\Routing\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
-// use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Routing\Controller;
+
+
 
 class PelangganController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(['auth', 'role:admin']);
-    }
-
-    // Tampilkan daftar pelanggan
+    // Tampilkan semua pelanggan
     public function index()
     {
-        $pelanggan = Pelanggan::paginate(10);
+        $pelanggan = Pelanggan::paginate(10); // atau jumlah per halaman yang kamu inginkan
+
         return view('admin.pelanggan.index', compact('pelanggan'));
     }
 
-    // Form tambah pelanggan
+    // Tampilkan form tambah pelanggan
     public function create()
     {
         return view('admin.pelanggan.create');
@@ -31,56 +29,88 @@ class PelangganController extends Controller
     // Simpan pelanggan baru
     public function store(Request $request)
     {
-        $request->validate([
-            'id_pel' => 'required|string|max:100',
-            'kode_PLN' => 'required|string|max:100',
-            'nama_perusahaan' => 'required|string|max:100',
-            'nama' => 'required|string|max:50',
-            'kontak' => 'nullable|string|max:20',
-            'kapasitas_daya' => 'nullable|numeric',
-            'sektor' => 'nullable|string|max:50',
-            'peruntukan' => 'nullable|string|max:100',
-            'up3' => 'nullable|string|max:250',
-            'ulp' => 'nullable|string|max:250',
-            'kriteria_prioritas' => 'nullable|string|max:50',
+        $data = $request->validate([
+            'id_pel' => 'required',
+            'kode_PLN' => 'required',
+            'nama_perusahaan' => 'required',
+            'nama' => 'required',
+            'kontak' => 'required',
+            'kapasitas_daya' => 'required',
+            'sektor' => 'required',
+            'peruntukan' => 'required',
+            'up3' => 'required',
+            'ulp' => 'required',
+            'kriteria_prioritas' => 'required',
+
+            // Khusus untuk user
+            'nama_lengkap' => 'required',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|min:6',
         ]);
-        Pelanggan::create($request->all());
-        return Redirect::route('admin.pelanggan.index')->with('success', 'Pelanggan berhasil ditambahkan.');
+
+        // Buat user baru
+        $user = User::create([
+            'nama_lengkap' => $data['nama_lengkap'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+        ]);
+        // Assign role pelanggan secara otomatis
+        $user->assignRole('pelanggan');
+
+        $pelangganData = $data;
+        unset($pelangganData['nama_lengkap'], $pelangganData['email'], $pelangganData['password']);
+        $pelangganData['user_id'] = $user->id;
+
+
+        Pelanggan::create($pelangganData);
+
+        return redirect()->route('admin.pelanggan.index')->with('success', 'Pelanggan & user berhasil ditambahkan!');
     }
 
-    // Form edit pelanggan
-    public function edit($id)
+    // Tampilkan detail pelanggan
+    public function show(Pelanggan $pelanggan)
     {
-        $pelanggan = Pelanggan::findOrFail($id);
+        return view('admin.pelanggan.detail', compact('pelanggan'));
+    }
+
+    // Tampilkan form edit pelanggan
+    public function edit(Pelanggan $pelanggan)
+    {
         return view('admin.pelanggan.edit', compact('pelanggan'));
     }
 
-    // Update pelanggan
-    public function update(Request $request, $id)
+    // Update data pelanggan
+    public function update(Request $request, Pelanggan $pelanggan)
     {
-        $pelanggan = Pelanggan::findOrFail($id);
-        $request->validate([
-            'id_pel' => 'required|string|max:100',
-            'kode_PLN' => 'required|string|max:100',
-            'nama_perusahaan' => 'required|string|max:100',
-            'nama' => 'required|string|max:50',
-            'kontak' => 'nullable|string|max:20',
-            'kapasitas_daya' => 'nullable|numeric',
-            'sektor' => 'nullable|string|max:50',
-            'peruntukan' => 'nullable|string|max:100',
-            'up3' => 'nullable|string|max:250',
-            'ulp' => 'nullable|string|max:250',
-            'kriteria_prioritas' => 'nullable|string|max:50',
+        $data = $request->validate([
+            'id_pel' => 'required',
+            'kode_PLN' => 'required',
+            'nama_perusahaan' => 'required',
+            'nama' => 'required',
+            'kontak' => 'required',
+            'kapasitas_daya' => 'required',
+            'sektor' => 'required',
+            'peruntukan' => 'required',
+            'up3' => 'required',
+            'ulp' => 'required',
+            'kriteria_prioritas' => 'required',
         ]);
-        $pelanggan->update($request->all());
-        return Redirect::route('admin.pelanggan.index')->with('success', 'Pelanggan berhasil diupdate.');
+        $pelanggan->update($data);
+        return redirect()->route('admin.pelanggan.index')->with('success', 'Pelanggan berhasil diupdate!');
     }
 
     // Hapus pelanggan
-    public function destroy($id)
+    public function destroy(Pelanggan $pelanggan)
     {
-        $pelanggan = Pelanggan::findOrFail($id);
         $pelanggan->delete();
-        return Redirect::route('admin.pelanggan.index')->with('success', 'Pelanggan berhasil dihapus.');
+        return redirect()->route('admin.pelanggan.index');
+    }
+
+    // Import pelanggan dari file CSV
+
+    public function import(Request $request)
+    {
+
+        return redirect()->route('admin.pelanggan.index')->with('success', 'Import data pelanggan berhasil!');
     }
 }

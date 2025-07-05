@@ -17,7 +17,7 @@ class ProfileUpdateRequest extends FormRequest
     {
         $userId = auth()->id();
         return [
-            'nama_lengkap' => ['required', 'string', 'max:100'],
+            'nama' => ['required', 'string', 'max:100'],
             'email' => [
                 'required',
                 'string',

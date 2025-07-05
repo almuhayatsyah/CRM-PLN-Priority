@@ -41,6 +41,9 @@ Route::middleware(['auth'])->group(function () {
 
     // ---------- Manajemen Pelanggan ----------
     Route::resource('admin/pelanggan', App\Http\Controllers\Admin\PelangganController::class)->names('admin.pelanggan');
+    Route::get('admin/pelanggan/create', [App\Http\Controllers\Admin\PelangganController::class, 'create'])->name('admin.pelanggan.create');
+    
+
 
 
 

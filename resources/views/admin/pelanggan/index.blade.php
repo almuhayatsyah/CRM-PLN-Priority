@@ -12,21 +12,22 @@
     </div>
     @endif
     <div class="table-responsive">
-        <table class="table table-bordered table-hover align-middle">
+        <table id="tabel-pelanggan" class="table table-bordered table-hover align-middle">
             <thead class="table-light">
                 <tr>
                     <th>No</th>
-                    <th>ID Pel</th>
-                    <th>Kode PLN</th>
-                    <th>Nama Perusahaan</th>
-                    <th>Nama PIC</th>
-                    <th>Kontak</th>
-                    <th>Kapasitas Daya</th>
-                    <th>Sektor</th>
-                    <th>Peruntukan</th>
-                    <th>UP3</th>
-                    <th>ULP</th>
-                    <th>Kriteria Prioritas</th>
+                    <th><i class="fas fa-id-card me-1"></i>ID Pel</th>
+                    <th><i class="fas fa-key me-1"></i>Kode PLN</th>
+                    <th><i class="fas fa-building me-1"></i>Nama Perusahaan</th>
+                    <th><i class="fas fa-envelope me-1 text-success"></i>Email</th>
+                    <th><i class="fas fa-user me-1"></i>Nama PIC</th>
+                    <th><i class="fas fa-phone me-1 text-primary"></i>Kontak</th>
+                    <th><i class="fas fa-bolt me-1 text-warning"></i>Kapasitas Daya</th>
+                    <th><i class="fas fa-industry me-1 text-info"></i>Sektor</th>
+                    <th><i class="fas fa-clipboard-list me-1"></i>Peruntukan</th>
+                    <th><i class="fas fa-map-marker-alt me-1 text-danger"></i>UP3</th>
+                    <th><i class="fas fa-map-marker-alt me-1 text-danger"></i>ULP</th>
+                    <th><i class="fas fa-star me-1 text-warning"></i>Kriteria Prioritas</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -37,33 +38,40 @@
                     <td>{{ $item->id_pel }}</td>
                     <td>{{ $item->kode_PLN }}</td>
                     <td>{{ $item->nama_perusahaan }}</td>
+                    <td>{{ $item->user->email ?? '-' }}</td>
                     <td>{{ $item->nama }}</td>
                     <td>{{ $item->kontak }}</td>
-                    <td>{{ $item->kapasitas_daya }}</td>
+                    <td>{{ $item->kapasitas_daya }} kWh</td>
                     <td>{{ $item->sektor }}</td>
                     <td>{{ $item->peruntukan }}</td>
                     <td>{{ $item->up3 }}</td>
                     <td>{{ $item->ulp }}</td>
                     <td>{{ $item->kriteria_prioritas }}</td>
                     <td>
-                        <a href="{{ route('admin.pelanggan.edit', $item->id) }}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> Edit</a>
-                        <form action="{{ route('admin.pelanggan.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin hapus pelanggan ini?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Hapus</button>
-                        </form>
+                        <div class="d-flex gap-2">
+                            <a href="{{ route('admin.pelanggan.show', $item->id) }}" class="btn btn-sm btn-info">
+                                <i class="fas fa-info-circle"></i> Detail
+                            </a>
+                            <a href="{{ route('admin.pelanggan.edit', $item->id) }}" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <form action="{{ route('admin.pelanggan.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Yakin hapus pelanggan ini?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash"></i> Hapus
+                                </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="13" class="text-center">Belum ada data pelanggan.</td>
+                    <td colspan="14" class="text-center">Belum ada data pelanggan.</td>
                 </tr>
                 @endforelse
             </tbody>
         </table>
-        <div>
-            {{ $pelanggan->links() }}
-        </div>
     </div>
 </div>
 @endsection

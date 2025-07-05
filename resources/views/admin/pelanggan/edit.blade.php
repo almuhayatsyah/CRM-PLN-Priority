@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container-fluid">
-    <h4>Edit Data Pelanggan</h4>
+    <h4 class="mb-3">Edit Pelanggan</h4>
     <form action="{{ route('admin.pelanggan.update', $pelanggan->id) }}" method="POST">
         @csrf
         @method('PUT')
@@ -51,7 +51,7 @@
                 <select name="up3" class="form-control" required>
                     <option value="">-- Pilih UP3 --</option>
                     @foreach(\App\Models\Pelanggan::UP3_OPTIONS as $up3)
-                    <option value="{{ $up3 }}" {{ old('up3', $pelanggan->up3) == $up3 ? 'selected' : '' }}>{{ ucfirst(str_replace('_',' ', $up3)) }}</option>
+                    <option value="{{ $up3 }}" {{ old('up3', $pelanggan->up3) == $up3 ? 'selected' : '' }}>{{ $up3 }}</option>
                     @endforeach
                 </select>
             </div>
@@ -70,9 +70,17 @@
                     @endforeach
                 </select>
             </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" value="{{ $pelanggan->user->email ?? '' }}" readonly>
+            </div>
+            <div class="mb-3">
+                <label for="role" class="form-label">Role</label>
+                <input type="text" class="form-control" id="role" name="role" value="pelanggan" readonly>
+            </div>
         </div>
         <div class="mt-4">
-            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+            <button type="submit" class="btn btn-primary">Update</button>
             <a href="{{ route('admin.pelanggan.index') }}" class="btn btn-secondary">Batal</a>
         </div>
     </form>

@@ -18,7 +18,7 @@
                 <i class="fas fa-chevron-down float-end"></i>
             </a>
             <div class="collapse" id="collapsePelanggan">
-                <a href="{{ route('admin.pelanggan.index') }}"" class="list-group-item list-group-item-action"><i class="fas fa-list me-2"></i> Daftar Pelanggan</a>
+                <a href="{{ route('admin.pelanggan.index') }}"" class=" list-group-item list-group-item-action"><i class="fas fa-list me-2"></i> Daftar Pelanggan</a>
                 <a href="{{ route('admin.pelanggan.create') }}" class="list-group-item list-group-item-action"><i class="fas fa-user-plus me-2"></i> Tambah Pelanggan</a>
             </div>
             <a class="list-group-item list-group-item-action" data-bs-toggle="collapse" href="#collapseAktivitas" role="button" aria-expanded="false" aria-controls="collapseAktivitas">
@@ -70,20 +70,20 @@
             style="background: linear-gradient(to right, #009fe3,#009fe3);
             clip-path: polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%);
             height: 70px;">
-    <div class="container-fluid px-4">
-        <a class="navbar-brand fw-semibold" href="dashboard">Dashboard</a>
-        <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="#"><i class="bi bi-person-circle"></i> Admin</a>
-            </li>
-        </ul>
-    </div>
+            <div class="container-fluid px-4">
+                <a class="navbar-brand fw-semibold" href="dashboard">Dashboard</a>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="bi bi-person-circle"></i> Admin</a>
+                    </li>
+                </ul>
+            </div>
         </nav>
 
 
-    <div class="container-fluid mt-4">
-        @yield('content')
+        <div class="container-fluid mt-4">
+            @yield('content')
+        </div>
     </div>
-</div>
 
 </div>
