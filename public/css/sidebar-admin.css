@@ -95,3 +95,43 @@
     color: #856404;
     font-size: 1rem;
 }
+.table td:nth-child(4),
+.table th:nth-child(4) {
+    /* Nama Perusahaan */
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.table td:nth-child(5),
+.table th:nth-child(5) {
+    /* Email */
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.sidebar .nav-link,
+#sidebarMenu .nav-link {
+    color: #fff;
+    transition: background 0.2s, color 0.2s;
+}
+.sidebar .nav-link i,
+#sidebarMenu .nav-link i {
+    color: #000 !important;
+}
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active,
+.sidebar .nav-link:focus,
+#sidebarMenu .nav-link:hover,
+#sidebarMenu .nav-link.active,
+#sidebarMenu .nav-link:focus {
+    background: #fff !important;
+    color: #000 !important;
+}
+.sidebar .nav-link:hover i,
+.sidebar .nav-link.active i,
+.sidebar .nav-link:focus i,
+#sidebarMenu .nav-link:hover i,
+#sidebarMenu .nav-link.active i,
+#sidebarMenu .nav-link:focus i {
+    color: #000 !important;
+}

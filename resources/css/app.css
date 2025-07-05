@@ -161,3 +161,22 @@ body {
 .role-badge.pelanggan {
     background-color: #10b981;
 }
+
+.sidebar .nav-link {
+    color: #fff;
+    transition: background 0.2s, color 0.2s;
+}
+.sidebar .nav-link i {
+    color: #000 !important;
+}
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active,
+.sidebar .nav-link:focus {
+    background: #fff !important;
+    color: #000 !important;
+}
+.sidebar .nav-link:hover i,
+.sidebar .nav-link.active i,
+.sidebar .nav-link:focus i {
+    color: #000 !important;
+}

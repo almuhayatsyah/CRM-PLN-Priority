@@ -2,7 +2,7 @@
 @section('content')
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="mb-0">Daftar Pelanggan</h4>
+        <h4><i class="fas fa-users me-2"></i>Daftar Pelanggan</h4>
         <a href="{{ route('admin.pelanggan.create') }}" class="btn btn-primary"><i class="fas fa-user-plus me-1"></i> Tambah Pelanggan</a>
     </div>
     @if(session('success'))
@@ -11,6 +11,35 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
     @endif
+
+    <!-- searching dan drop down pelanggan -->
+    <div class="mb-3 d-flex gap-2 align-items-center">
+        <div style="width: 200px;">
+            <select id="idPelFilter" class="form-select form-select-sm">
+                <option value="">Semua ID Pel</option>
+                @foreach($pelanggan as $item)
+                <option value="{{ $item->id_pel }}">{{ $item->id_pel }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div style="width: 200px;">
+            <select id="up3Filter" class="form-select form-select-sm">
+                <option value="">Semua UP3</option>
+                @foreach(\App\Models\Pelanggan::UP3_OPTIONS as $up3)
+                <option value="{{ $up3 }}">{{ $up3 }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div style="width: 200px;">
+            <select id="sektorFilter" class="form-select form-select-sm">
+                <option value="">Semua sektor</option>
+                @foreach(\App\Models\Pelanggan::SEKTOR_OPTIONS as $sektor)
+                <option value="{{ $sektor }}">{{ $sektor }}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+    <!-- Tabel Pelanggan -->
     <div class="table-responsive">
         <table id="tabel-pelanggan" class="table table-bordered table-hover align-middle">
             <thead class="table-light">
