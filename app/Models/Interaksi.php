@@ -2,27 +2,35 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Interaksi extends Model
 {
-    protected $table = 'interaksi';
+  use HasFactory;
 
-    protected $fillable = [
-        'pelanggan_id',
-        'bulan_tahun',
-        'pemakaian_kwh',
-        'beban_anomali',
-        'flag_anomali',
-    ];
+  protected $table = 'interaksi';
 
-    public function pelanggan()
-    {
-        return $this->belongsTo(Pelanggan::class);
-    }
+  protected $fillable = [
+    'pelanggan_id',
+    'user_id',
+    'jenis_interaksi',
+    'deskripsi',
+    'tanggal_interaksi',
+    'status_interaksi'
+  ];
 
-    public function feedback()
-    {
-        return $this->hasMany(Feedback::class);
-    }
+  public function pelanggan()
+  {
+    return $this->belongsTo(Pelanggan::class);
+  }
+  // Relasi ke Feedback
+  public function feedbacks()
+  {
+    return $this->hasMany(Feedback::class, 'interaksi_id');
+  }
+  public function user()
+  {
+    return $this->belongsTo(User::class);
+  }
 }

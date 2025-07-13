@@ -1,17 +1,25 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
 use App\Models\Pelanggan;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Routing\Controller;
-
-
+use App\Http\Controllers\Controller;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PelangganController extends Controller
 {
+
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+        $this->middleware('role:admin')->only(['create', 'store', 'edit', 'update', 'export', 'show', 'destroy']);
+        $this->middleware('role:admin|manajer|staff')->only(['index', 'show']);
+    }
+
     // Tampilkan semua pelanggan
     public function index()
     {
@@ -113,4 +121,14 @@ class PelangganController extends Controller
 
         return redirect()->route('admin.pelanggan.index')->with('success', 'Import data pelanggan berhasil!');
     }
+
+    public function exportPdf()
+    {
+        $pelanggan = \App\Models\Pelanggan::with('user')->get();
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.pelanggan.export_pdf', compact('pelanggan'));
+        return $pdf->download('data_pelanggan.pdf');
+    }
+
+    // Export Excel
+
 }

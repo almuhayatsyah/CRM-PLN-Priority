@@ -1,15 +1,16 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminDashboard;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\JadwalKunjunganController;
-use App\Http\Controllers\InteraksiController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\PemakaianDayaController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\InteraksiController;
+
 
 
 // ========================
@@ -37,25 +38,24 @@ Route::get('/', function () {
 // ========================
 Route::middleware(['auth'])->group(function () {
     // ---------- Dashboard Admin ----------
-    Route::get('/admin/dashboard', [App\Http\Controllers\Admin\AdminController::class, 'index'])->name('admin.dashboard');
+    Route::get('admin/dashboard', [AdminDashboard::class, 'index'])->name('admin.dashboard');
+    Route::resource('admin/user', UserController::class)->names('admin.user');
+    Route::get('admin/user/create', [UserController::class, 'create'])->name('admin.user.create');
+
 
     // ---------- Manajemen Pelanggan ----------
-    Route::resource('admin/pelanggan', App\Http\Controllers\Admin\PelangganController::class)->names('admin.pelanggan');
-    Route::get('admin/pelanggan/create', [App\Http\Controllers\Admin\PelangganController::class, 'create'])->name('admin.pelanggan.create');
-    
+    Route::get('admin/pelanggan/export-pdf', [App\Http\Controllers\PelangganController::class, 'exportPdf'])->name('admin.pelanggan.exportPdf');
+    Route::resource('admin/pelanggan', App\Http\Controllers\PelangganController::class)->names('admin.pelanggan');
+    Route::get('admin/pelanggan/create', [App\Http\Controllers\PelangganController::class, 'create'])->name('admin.pelanggan.create');
 
 
-
-
-
-    // ---------- Manajemen Jadwal Kunjungan ----------
-    Route::resource('admin/jadwal-kunjungan', JadwalKunjunganController::class)->names('admin.jadwal-kunjungan');
-
-    // ---------- Manajemen Interaksi ----------
+    // ---------- Manajemen Aktivitas ----------
     Route::resource('admin/interaksi', InteraksiController::class)->names('admin.interaksi');
+    Route::get('admin/monitoring_aktivitas/kunjungan-interaksi', [AdminDashboard::class, 'kunjunganInteraksi'])->name('admin.monitoring.kunjungan-interaksi');
 
+    Route::resource('admin/jadwal-kunjungan', JadwalKunjunganController::class)->names('admin.jadwal-kunjungan');
     // ---------- Manajemen Feedback ----------
-    Route::resource('admin/feedback', FeedbackController::class)->names('admin.feedback');
+    Route::resource('admin/laporan/feedback', FeedbackController::class)->names('admin.feedback');
 
     // ---------- Manajemen Notifikasi ----------
     Route::resource('admin/notifikasi', NotifikasiController::class)->names('admin.notifikasi');
@@ -63,10 +63,14 @@ Route::middleware(['auth'])->group(function () {
     // ---------- Manajemen Pemakaian Daya ----------
     Route::resource('admin/pemakaian-daya', PemakaianDayaController::class)->names('admin.pemakaian-daya');
 
+
+
+    // ----------Feedback-----------------
+
+
+
     // ---------- Manajemen User (CRUD user oleh admin) ----------
-    Route::resource('admin/user', App\Http\Controllers\Admin\UserController::class)->names('admin.user');
-    // Route khusus form tambah user (opsional, sudah termasuk di resource, tapi bisa eksplisit)
-    Route::get('admin/user/create', [App\Http\Controllers\Admin\UserController::class, 'create'])->name('admin.user.create');
+
 });
 
 // ========================

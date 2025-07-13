@@ -45,7 +45,7 @@
     <div class="card-body">
         <ul class="list-group">
             @forelse($pelangganAktif as $pelanggan) {{-- @forelse adalah fitur Blade, mirip @foreach tapi ada @empty --}}
-            <li class="list-group-item">{{ $pelanggan->nama_perusahaan }} ({{ $pelanggan->nama }})</li>
+            <li class="list-group-item">{{ $pelanggan->nama_perusahaan }} ({{ $pelanggan->nama }})({{ $pelanggan->id_pel }})</li>
             @empty
             <li class="list-group-item">Tidak ada data pelanggan aktif.</li>
             @endforelse

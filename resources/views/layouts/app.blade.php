@@ -15,6 +15,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
 <body>
@@ -22,6 +23,13 @@
     <footer>
         <p class="text-center text-muted mt-4">© {{ date(format: 'Y') }} CRM UID. All rights reserved.</p>
     </footer>
+
+    <script>
+        // Kembalikan ke versi awal, tanpa custom dropdown JS
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inisialisasi komponen lain jika ada
+        });
+    </script>
 </body>
 
 </html>
