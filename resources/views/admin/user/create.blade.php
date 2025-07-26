@@ -13,7 +13,7 @@
     </ul>
   </div>
   @endif
-  <form action="{{ route('admin.user.store') }}" method="POST">
+  <form action="{{ route('admin.users.store') }}" method="POST">
     @csrf
     <div class="mb-3">
       <label for="nama_lengkap" class="form-label">Nama Lengkap</label>
@@ -41,7 +41,7 @@
       </select>
     </div>
     <button type="submit" class="btn btn-primary">Simpan</button>
-    <a href="{{ route('admin.user.index') }}" class="btn btn-secondary">Batal</a>
+    <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">Batal</a>
   </form>
 </div>
 @endsection
