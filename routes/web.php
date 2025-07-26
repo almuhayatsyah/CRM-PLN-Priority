@@ -1,88 +1,75 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\LandingPageController;
+
+// Impor Controller khusus Admin dari sub-namespace Admin
 use App\Http\Controllers\Admin\AdminDashboard;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\ProfileController;
+
+// Impor Controller modul yang dipakai bersama dari namespace utama
+use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\JadwalKunjunganController;
+use App\Http\Controllers\InteraksiController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\PemakaianDayaController;
+
+
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\InteraksiController;
 
+// Rute Landing Page
+Route::get('/', [LandingPageController::class, 'index'])->name('landing');
 
-
-// ========================
-// ROOT & AUTH REDIRECT
-// ========================
-// Redirect root ke dashboard jika sudah login, ke login jika belum
-Route::get('/', function () {
-    if (Auth::check()) {
-        $user = Auth::user();
-        if ($user->hasRole('admin')) {
-            return redirect()->route('admin.dashboard');
-        }
-        // Tambahkan redirect sesuai role lain jika ada
-        // else if ($user->hasRole('manajer')) { ... }
-        // else if ($user->hasRole('staff')) { ... }
-        // else if ($user->hasRole('pelanggan')) { ... }
-        // Default: redirect ke profile
-        return redirect()->route('profile.edit');
-    }
-    return view('auth.login');
-});
-
-// ========================
-// ADMIN ROUTES (hanya untuk admin)
-// ========================
+// Grup Rute yang Membutuhkan Autentikasi
+// Middleware 'role' akan diterapkan di __construct masing-masing Controller
 Route::middleware(['auth'])->group(function () {
-    // ---------- Dashboard Admin ----------
-    Route::get('admin/dashboard', [AdminDashboard::class, 'index'])->name('admin.dashboard');
-    Route::resource('admin/user', UserController::class)->names('admin.user');
-    Route::get('admin/user/create', [UserController::class, 'create'])->name('admin.user.create');
+    // RUTE UNTUK MODUL KHUSUS ADMIN
+    // Dashboard Admin
+    Route::get('/admin/dashboard', [AdminDashboard::class, 'index'])->name('admin.dashboard');
+
+    // Manajemen User Sistem (Hanya Admin)
+    Route::resource('admin/users', UserController::class)->names('admin.users');
+
+    // Monitoring Aktivitas
+    Route::get('admin/monitoring/staff-activity', [AdminDashboard::class, 'staffActivity'])->name('admin.monitoring.staff-activity');
+    Route::get('admin/monitoring/kunjungan-interaksi', [AdminDashboard::class, 'kunjunganInteraksi'])->name('admin.monitoring.kunjungan-interaksi');
+    Route::get('admin/monitoring/feedback-masuk', [AdminDashboard::class, 'feedbackMasuk'])->name('admin.monitoring.feedback-masuk');
+
+    // Laporan & Analitik
+    Route::get('admin/laporan/kunjungan', [AdminDashboard::class, 'laporanKunjungan'])->name('admin.laporan.kunjungan');
+    Route::get('admin/laporan/feedback', [AdminDashboard::class, 'laporanFeedback'])->name('admin.laporan.feedback');
+    Route::get('admin/laporan/pemakaian-daya', [AdminDashboard::class, 'laporanPemakaianDaya'])->name('admin.laporan.pemakaian-daya');
+    Route::get('admin/laporan/unduh', [AdminDashboard::class, 'unduhLaporan'])->name('admin.laporan.unduh'); // Rute untuk menampilkan form unduh
+
+    // PENTING: Tambahkan Rute POST untuk memproses unduh laporan
+    Route::post('admin/laporan/do-unduh', [AdminDashboard::class, 'doUnduhLaporan'])->name('admin.laporan.do-unduh'); // <-- TAMBAHKAN INI
+
+    // Pengaturan Sistem
+    Route::get('admin/pengaturan-sistem', [AdminDashboard::class, 'pengaturanSistem'])->name('admin.pengaturan-sistem');
 
 
-    // ---------- Manajemen Pelanggan ----------
-    Route::get('admin/pelanggan/export-pdf', [App\Http\Controllers\PelangganController::class, 'exportPdf'])->name('admin.pelanggan.exportPdf');
-    Route::resource('admin/pelanggan', App\Http\Controllers\PelangganController::class)->names('admin.pelanggan');
-    Route::get('admin/pelanggan/create', [App\Http\Controllers\PelangganController::class, 'create'])->name('admin.pelanggan.create');
+    // RUTE UNTUK MODUL YANG DIPAKAI BERSAMA
+    // PENTING: Rute spesifik (seperti export) HARUS di atas resource yang lebih umum untuk Controller yang sama.
+    Route::get('admin/pelanggan/export-pdf', [PelangganController::class, 'exportPdf'])->name('admin.pelanggan.exportPdf');
+    Route::get('admin/pelanggan/export-excel', [PelangganController::class, 'exportExcel'])->name('admin.pelanggan.exportExcel');
+    // Resource route untuk Pelanggan (harus di bawah rute export spesifiknya)
+    Route::resource('admin/pelanggan', PelangganController::class)->names('admin.pelanggan');
 
-
-    // ---------- Manajemen Aktivitas ----------
-    Route::resource('admin/interaksi', InteraksiController::class)->names('admin.interaksi');
-    Route::get('admin/monitoring_aktivitas/kunjungan-interaksi', [AdminDashboard::class, 'kunjunganInteraksi'])->name('admin.monitoring.kunjungan-interaksi');
-
+    // Resource routes untuk modul-modul lain
     Route::resource('admin/jadwal-kunjungan', JadwalKunjunganController::class)->names('admin.jadwal-kunjungan');
-    // ---------- Manajemen Feedback ----------
-    Route::resource('admin/laporan/feedback', FeedbackController::class)->names('admin.feedback');
-
-    // ---------- Manajemen Notifikasi ----------
+    Route::resource('admin/interaksi', InteraksiController::class)->names('admin.interaksi');
+    Route::resource('admin/feedback', FeedbackController::class)->names('admin.feedback');
     Route::resource('admin/notifikasi', NotifikasiController::class)->names('admin.notifikasi');
-
-    // ---------- Manajemen Pemakaian Daya ----------
     Route::resource('admin/pemakaian-daya', PemakaianDayaController::class)->names('admin.pemakaian-daya');
 
 
-
-    // ----------Feedback-----------------
-
-
-
-    // ---------- Manajemen User (CRUD user oleh admin) ----------
-
-});
-
-// ========================
-// PROFILE ROUTES (untuk semua user yang login)
-// ========================
-Route::middleware('auth')->group(function () {
+    // Rute Profil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// ========================
-// AUTH ROUTES (Laravel Breeze/Fortify/Jetstream)
-// ========================
+// Rute Autentikasi Bawaan Laravel Breeze
 require __DIR__ . '/auth.php';

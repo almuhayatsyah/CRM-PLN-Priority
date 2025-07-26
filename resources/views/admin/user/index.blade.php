@@ -3,11 +3,15 @@
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4 class="mb-0">Manajemen User</h4>
-        <a href="{{ route('admin.user.create') }}" class="btn btn-primary"><i class="fas fa-user-plus me-1"></i> Tambah User</a>
+        <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
+            <i class="fas fa-user-plus me-1"></i> Tambah User
+        </a>
     </div>
+
     @if(session('success'))
     <div class="alert alert-success">{{ session('success') }}</div>
     @endif
+
     <div class="table-responsive">
         <table class="table table-bordered table-hover align-middle">
             <thead class="table-light">
@@ -26,25 +30,35 @@
                     <td>{{ $user->nama_lengkap }}</td>
                     <td>{{ $user->email }}</td>
                     <td>
+                        @php
+                        $roleColors = [
+                        'admin' => 'bg-primary text-white',
+                        'manajer' => 'bg-success text-white',
+                        'staff' => 'bg-warning text-dark',
+                        'pelanggan' => 'bg-info text-dark',
+                        ];
+                        @endphp
                         @foreach($user->roles as $role)
-                        <span class="badge bg-info text-dark">{{ $role->name }}</span>
+                        <span class="badge {{ $roleColors[$role->name] ?? 'bg-secondary text-white' }}">
+                            {{ $role->name }}
+                        </span>
                         @endforeach
                     </td>
                     <td>
-    <!-- Tombol Edit -->
-    <a href="{{ route('admin.user.edit', $user->id) }}" class="btn btn-edit">
-        ✏️ Edit
-    </a>
+                        <!-- Tombol Edit -->
+                        <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-edit">
+                            ✏️ Edit
+                        </a>
 
-    <!-- Tombol Hapus -->
-    <form action="{{ route('admin.user.destroy', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin hapus user ini?')">
-        @csrf
-        @method('DELETE')
-        <button type="submit" class="btn btn-delete">
-            🗑️ Hapus
-        </button>
-    </form>
-</td>
+                        <!-- Tombol Hapus -->
+                        <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin hapus user ini?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-delete">
+                                🗑️ Hapus
+                            </button>
+                        </form>
+                    </td>
                 </tr>
                 @empty
                 <tr>
@@ -58,22 +72,20 @@
         </div>
     </div>
 
-{{-- flash massage --}}
+    {{-- flash message --}}
     @if (session('success'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         {{ session('success') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-@endif
+    @endif
 
-@if (session('error'))
+    @if (session('error'))
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
         {{ session('error') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-@endif
-
-
+    @endif
 
 </div>
 @endsection

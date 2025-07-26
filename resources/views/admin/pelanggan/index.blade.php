@@ -95,8 +95,11 @@
     <a href="{{ route('admin.monitoring.kunjungan-interaksi') }}" class="btn btn-secondary mb-2 me-2">
         <i class="fas fa-users"></i> Kunjungan & Interaksi
     </a>
-    <a href="{{ route('admin.pelanggan.exportPdf') }}" class="btn btn-danger mb-2">
-        <i class="bi bi-file-earmark-pdf"></i> Export PDF
+    <a href="{{ route('admin.pelanggan.exportPdf') }}" class="btn btn-danger me-2">
+        <i class="fas fa-file-pdf me-1"></i> Export PDF
+    </a>
+    <a href="{{ route('admin.pelanggan.exportExcel') }}" class="btn btn-success"> {{-- <-- PASTIKAN INI --}}
+        <i class="fas fa-file-excel me-1"></i> Export Excel
     </a>
 </div>
 <div class="table-responsive">

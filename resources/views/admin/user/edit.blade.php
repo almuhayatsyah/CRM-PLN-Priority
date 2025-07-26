@@ -11,13 +11,13 @@
     </ul>
   </div>
   @endif
-  <form action="{{ route('admin.user.update', $user->id) }}" method="POST">
+  <form action="{{ route('admin.users.update', $user->id) }}" method="POST">
     @csrf
     @method('PUT')
     <div class="mb-3">
       <label for="nama_lengkap" class="form-label">Nama Lengkap</label>
       <input type="text" class="form-control" id="nama_lengkap" name="nama_lengkap" value="{{ old('nama_lengkap', $user->nama_lengkap ?? '') }}" required>
-      </div>
+    </div>
     <div class="mb-3">
       <label for="email" class="form-label">Email</label>
       <input type="email" class="form-control" id="email" name="email" value="{{ old('email', $user->email) }}" required>
@@ -37,9 +37,9 @@
         @foreach ($roles as $role)
         <option value="{{ $role->name }}" {{ (old('role', $user->roles->first()->name ?? '') == $role->name) ? 'selected' : '' }}>{{ ucfirst($role->name) }}</option>
         @endforeach
-        </select>
+      </select>
     </div>
-      <button type="submit" class="btn btn-primary">Update</button>
+    <button type="submit" class="btn btn-primary">Update</button>
     <a href="{{ route('admin.user.index') }}" class="btn btn-secondary">Batal</a>
   </form>
 </div>
