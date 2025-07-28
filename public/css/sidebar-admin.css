@@ -1,142 +1,325 @@
 :root {
-    /* Warna utama PLN */
-    --pln-blue: #009fe3; /* Biru PLN */
-    --pln-yellow: #ffe600; /* Kuning PLN */
-    --pln-dark: #000000; /* Hitam */
-    --pln-white: #ffffff; /* Putih */
-    --pln-gradient: linear-gradient(
-        135deg,
-        #009fe3 0%,
-        #ffe600 100%
-    ); /* Gradasi biru ke kuning */
+    /* Warna utama - Selaras dengan Landing Page */
+    --primary-blue: #1e293b; /* Deep blue background */
+    --secondary-blue: #334155; /* Lighter blue */
+    --accent-orange: #f97316; /* Orange accent */
+    --accent-orange-dark: #ea580c; /* Darker orange */
+    --text-white: #ffffff; /* White text */
+    --text-light: #e2e8f0; /* Light gray text */
+    --glass-bg: rgba(255, 255, 255, 0.05); /* Glassmorphism background */
+    --glass-border: rgba(255, 255, 255, 0.1); /* Glassmorphism border */
+    --sidebar-gradient: linear-gradient(135deg, #1e293b 0%, #334155 100%);
 }
+
 #sidebar-wrapper {
-    position: fixed; /* Sidebar tetap di sisi kiri */
-    top: 0; /* Mulai dari atas */
-    left: 0; /* Mulai dari kiri */
-    height: 100vh; /* Tinggi penuh layar */
-    width: 260px; /* Lebar sidebar */
-    background: var(--pln-gradient); /* Background gradasi PLN */
-    color: var(--pln-dark); /* Warna teks utama sidebar */
-    box-shadow: 2px 0 16px 0 rgba(0, 0, 0, 0.08); /* Bayangan samping sidebar */
-    border-top-right-radius: 24px; /* Sudut atas kanan membulat */
-    border-bottom-right-radius: 24px; /* Sudut bawah kanan membulat */
-    transition: all 0.3s; /* Transisi smooth untuk perubahan */
-    z-index: 1000; /* Di atas konten biasa */
-    display: flex; /* Flexbox untuk isi sidebar */
-    flex-direction: column; /* Isi vertikal */
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 260px;
+    background: var(--sidebar-gradient);
+    color: var(--text-white);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+    border-right: 1px solid var(--glass-border);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(10px);
 }
+
 .sidebar-heading {
-    background: rgba(255, 255, 255, 0.85); /* Background putih transparan */
-    color: var(--pln-dark); /* Warna teks */
-    border-radius: 16px; /* Sudut membulat */
-    margin: 18px 16px 12px 16px; /* Margin sekeliling */
-    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.04); /* Bayangan lembut */
-    flex-shrink: 0; /* Tidak mengecil saat flex */
+    background: var(--glass-bg);
+    color: var(--text-white);
+    border-radius: 16px;
+    margin: 20px 16px 12px 16px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    flex-shrink: 0;
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    text-align: center;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--glass-border);
 }
+
+.sidebar-heading h6 {
+    color: var(--text-white);
+    font-weight: 600;
+    margin: 0;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+}
+
 .list-group.list-group-flush {
-    flex: 1 1 auto; /* Flex grow agar sidebar penuh */
-    overflow-y: auto; /* Scroll jika isi banyak */
-    min-height: 0; /* Minimal tinggi 0 */
-    padding-bottom: 16px; /* Padding bawah */
+    flex: 1 1 auto;
+    overflow-y: auto;
+    min-height: 0;
+    padding-bottom: 16px;
 }
+
 .sidebar-logo {
-    background: var(--pln-white); /* Background putih */
-    border-radius: 12px; /* Sudut membulat */
-    padding: 8px; /* Padding dalam */
-    margin-bottom: 8px; /* Jarak bawah */
-    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.06); /* Bayangan lembut */
+    background: var(--glass-bg);
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    text-align: center;
 }
+
+.sidebar-logo img {
+    max-width: 40px;
+    height: auto;
+}
+
 .list-group-item {
-    background: transparent; /* Tidak ada background default */
-    color: var(--pln-dark); /* Warna teks */
-    border: none; /* Tanpa border */
-    border-radius: 8px; /* Sudut membulat */
-    margin: 2px 8px; /* Jarak antar item */
-    font-weight: 500; /* Teks tebal */
-    transition: background 0.2s, color 0.2s, box-shadow 0.2s; /* Transisi hover */
+    background: transparent;
+    color: var(--text-light);
+    border: none;
+    border-radius: 0;
+    margin: 2px 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+    padding: 12px 16px;
+    position: relative;
+    overflow: hidden;
 }
+
+.list-group-item::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        var(--accent-orange),
+        var(--accent-orange-dark)
+    );
+    transition: width 0.3s ease;
+    z-index: -1;
+}
+
 .list-group-item.active,
 .list-group-item:active,
 .list-group-item:hover {
-    background: var(--pln-blue); /* Hover/aktif: biru PLN */
-    color: var(--pln-white) !important; /* Teks putih saat hover/aktif */
-    box-shadow: 0 2px 8px 0 rgba(0, 159, 227, 0.1); /* Bayangan hover */
+    background: rgba(249, 115, 22, 0.2);
+    color: var(--text-white) !important;
+    border-left: 3px solid var(--accent-orange);
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(249, 115, 22, 0.2);
 }
+
+.list-group-item.active::before,
+.list-group-item:active::before,
+.list-group-item:hover::before {
+    width: 100%;
+}
+
 .list-group-item i {
-    color: var(--pln-blue); /* Icon biru PLN */
-    transition: color 0.2s; /* Transisi warna icon */
+    color: var(--accent-orange);
+    transition: all 0.3s ease;
+    margin-right: 12px;
+    font-size: 1.1rem;
 }
+
 .list-group-item.active i,
 .list-group-item:active i,
 .list-group-item:hover i {
-    color: var(--pln-yellow); /* Icon kuning saat hover/aktif */
+    color: var(--text-white);
+    transform: scale(1.1);
 }
+
 .collapse .list-group-item {
-    font-size: 0.97em; /* Ukuran font sedikit lebih kecil */
-    padding-left: 2.5rem; /* Indentasi untuk submenu */
+    font-size: 0.95em;
+    padding-left: 3rem;
+    margin-left: 16px;
+    border-left: 2px solid rgba(249, 115, 22, 0.3);
 }
+
 .dropdown-divider {
-    margin: 16px 0 8px 0; /* Jarak atas bawah divider */
-    border-top: 2px solid var(--pln-yellow); /* Divider kuning */
-    opacity: 0.7; /* Transparansi divider */
+    margin: 16px 8px 8px 8px;
+    border-top: 2px solid var(--accent-orange);
+    opacity: 0.6;
+    border-radius: 1px;
 }
+
+/* Custom Scrollbar untuk Sidebar */
+.list-group.list-group-flush::-webkit-scrollbar {
+    width: 6px;
+}
+
+.list-group.list-group-flush::-webkit-scrollbar-track {
+    background: var(--glass-bg);
+    border-radius: 3px;
+}
+
+.list-group.list-group-flush::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+        135deg,
+        var(--accent-orange),
+        var(--accent-orange-dark)
+    );
+    border-radius: 3px;
+}
+
+.list-group.list-group-flush::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, var(--accent-orange-dark), #dc2626);
+}
+
+/* Responsive Design */
 @media (max-width: 991.98px) {
     #sidebar-wrapper {
-        width: 100vw; /* Sidebar full width di mobile */
-        border-radius: 0; /* Tidak membulat di mobile */
-        position: static; /* Tidak fixed di mobile */
-        height: auto; /* Tinggi otomatis di mobile */
+        width: 100vw;
+        border-radius: 0;
+        position: static;
+        height: auto;
+        box-shadow: none;
+        border-right: none;
     }
+
     #page-content-wrapper {
-        margin-left: 0 !important; /* Hilangkan margin kiri di mobile */
+        margin-left: 0 !important;
+    }
+
+    .sidebar-heading {
+        margin: 10px;
+        border-radius: 12px;
+    }
+
+    .list-group-item {
+        margin: 1px 4px;
+        padding: 10px 12px;
     }
 }
+
+/* Notes Box - Updated Styling */
 .notes-box {
-    background: #fffbe6; /* Background kuning muda */
-    border: 1px solid #ffe58f; /* Border kuning */
-    border-radius: 6px; /* Sudut membulat */
-    padding: 16px; /* Padding dalam */
-    color: #856404; /* Warna teks kuning gelap */
-    font-size: 1rem; /* Ukuran font normal */
+    background: rgba(249, 115, 22, 0.1);
+    border: 1px solid rgba(249, 115, 22, 0.3);
+    border-radius: 12px;
+    padding: 16px;
+    color: var(--text-white);
+    font-size: 0.95rem;
+    backdrop-filter: blur(10px);
+    margin: 16px;
 }
+
+/* Table Styling - Consistent with main theme */
 .table td:nth-child(4),
 .table th:nth-child(4) {
-    /* Kolom Nama Perusahaan */
-    max-width: 180px; /* Maksimal lebar kolom */
-    overflow: hidden; /* Sembunyikan overflow */
-    text-overflow: ellipsis; /* Tampilkan ... jika kepanjangan */
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
+
 .table td:nth-child(5),
 .table th:nth-child(5) {
-    /* Kolom Email */
-    max-width: 180px; /* Maksimal lebar kolom */
-    overflow: hidden; /* Sembunyikan overflow */
-    text-overflow: ellipsis; /* Tampilkan ... jika kepanjangan */
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
+
+/* Navigation Links - Updated for consistency */
 .sidebar .nav-link,
 #sidebarMenu .nav-link {
-    color: #fff; /* Warna link sidebar putih */
-    transition: background 0.2s, color 0.2s; /* Transisi hover */
+    color: var(--text-light);
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    margin: 2px 0;
+    padding: 10px 16px;
 }
+
 .sidebar .nav-link i,
 #sidebarMenu .nav-link i {
-    color: #000 !important; /* Icon sidebar hitam */
+    color: var(--accent-orange) !important;
+    margin-right: 10px;
+    transition: all 0.3s ease;
 }
+
 .sidebar .nav-link:hover,
 .sidebar .nav-link.active,
 .sidebar .nav-link:focus,
 #sidebarMenu .nav-link:hover,
 #sidebarMenu .nav-link.active,
 #sidebarMenu .nav-link:focus {
-    background: #fff !important; /* Hover/aktif: background putih */
-    color: #000 !important; /* Hover/aktif: teks hitam */
+    background: rgba(249, 115, 22, 0.2) !important;
+    color: var(--text-white) !important;
+    border-left: 3px solid var(--accent-orange);
+    transform: translateX(5px);
 }
+
 .sidebar .nav-link:hover i,
 .sidebar .nav-link.active i,
 .sidebar .nav-link:focus i,
 #sidebarMenu .nav-link:hover i,
 #sidebarMenu .nav-link.active i,
 #sidebarMenu .nav-link:focus i {
-    color: #000 !important; /* Icon hitam saat hover/aktif */
+    color: var(--text-white) !important;
+    transform: scale(1.1);
+}
+
+/* Animation for sidebar items */
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.list-group-item {
+    animation: slideInLeft 0.3s ease-out;
+}
+
+/* Hover effects for better UX */
+.list-group-item:hover {
+    cursor: pointer;
+}
+
+/* Active state styling */
+.list-group-item.active {
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* Submenu styling */
+.collapse .list-group-item {
+    background: rgba(255, 255, 255, 0.02);
+    border-left: 2px solid rgba(249, 115, 22, 0.2);
+}
+
+.collapse .list-group-item:hover {
+    background: rgba(249, 115, 22, 0.15);
+    border-left-color: var(--accent-orange);
+}
+
+/* Logo and branding area */
+.sidebar-brand {
+    padding: 20px 16px;
+    text-align: center;
+    border-bottom: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+}
+
+.sidebar-brand h4 {
+    color: var(--text-white);
+    font-weight: 700;
+    margin: 0;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+}
+
+.sidebar-brand p {
+    color: var(--text-light);
+    margin: 5px 0 0 0;
+    font-size: 0.9rem;
+    opacity: 0.8;
 }

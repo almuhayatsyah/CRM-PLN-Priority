@@ -1,6 +1,49 @@
+@php
+$chartLabelsJson = json_encode($labelsGrafik);
+$chartDataKwhJson = json_encode($dataGrafikKwh);
+@endphp
+
 @extends('layouts.app')
 
 @section('content')
+<style>
+  /* Custom CSS untuk pagination sederhana */
+  .pagination {
+    margin-bottom: 0;
+  }
+  
+  .pagination-sm .page-link {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    border-radius: 0.2rem;
+  }
+  
+  .pagination .page-item.active .page-link {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: white;
+  }
+  
+  .pagination .page-item .page-link {
+    color: #0d6efd;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+  }
+  
+  .pagination .page-item .page-link:hover {
+    color: #0a58ca;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+  }
+  
+  .pagination .page-item.active .page-link:hover {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: white;
+  }
+</style>
+
 <div class="container-fluid">
   <h1 class="mt-4">Laporan Pemakaian Daya Pelanggan</h1>
   <ol class="breadcrumb mb-4">
@@ -86,7 +129,12 @@
       Tren Pemakaian Daya per Bulan (Tahun {{ $tahunFilter }})
     </div>
     <div class="card-body">
-      <canvas id="pemakaianDayaChart" width="100%" height="40"></canvas>
+      <div class="chart-container" style="position: relative; height: 500px; width: 100%;">
+        <canvas id="pemakaianDayaChart"
+          data-labels="{{ json_encode($labelsGrafik) }}"
+          data-values="{{ json_encode($dataGrafikKwh) }}">
+        </canvas>
+      </div>
     </div>
   </div>
 
@@ -132,8 +180,21 @@
             @endforelse
           </tbody>
         </table>
-        <div class="d-flex justify-content-center">
-          {{ $laporanPemakaianDayas->appends(request()->query())->links() }}
+        <div class="d-flex justify-content-center mt-3">
+          @if($laporanPemakaianDayas->hasPages())
+          <nav aria-label="Page navigation">
+            <ul class="pagination pagination-sm">
+              {{-- Hanya tampilkan nomor halaman, tanpa Previous/Next --}}
+              @for ($i = 1; $i <= $laporanPemakaianDayas->lastPage(); $i++)
+                <li class="page-item {{ $i == $laporanPemakaianDayas->currentPage() ? 'active' : '' }}">
+                  <a class="page-link" href="{{ $laporanPemakaianDayas->url($i) }}&{{ http_build_query(request()->except('page')) }}">
+                    {{ $i }}
+                  </a>
+                </li>
+                @endfor
+            </ul>
+          </nav>
+          @endif
         </div>
       </div>
     </div>
@@ -149,39 +210,113 @@
   document.addEventListener('DOMContentLoaded', function() {
     var ctx = document.getElementById('pemakaianDayaChart');
     if (ctx) { // Pastikan elemen canvas ada
+      console.log('Canvas element found');
+
+      // Ambil data dari data attributes
+      var chartLabels = JSON.parse(ctx.getAttribute('data-labels') || '[]');
+      var chartDataKwh = JSON.parse(ctx.getAttribute('data-values') || '[]');
+
+      console.log('Chart Labels:', chartLabels);
+      console.log('Chart Data:', chartDataKwh);
+
       var pemakaianDayaChart = new Chart(ctx, {
         type: 'line', // Bisa 'bar' atau 'line'
         data: {
-          labels: @json($labelsGrafik),
+          labels: chartLabels,
           datasets: [{
             label: 'Total Pemakaian Kwh',
             backgroundColor: 'rgba(75, 192, 192, 0.2)',
             borderColor: 'rgba(75, 192, 192, 1)',
+            borderWidth: 3,
             tension: 0.1,
             fill: true,
-            data: @json($dataGrafikKwh),
+            data: chartDataKwh,
+            pointBackgroundColor: 'rgba(75, 192, 192, 1)',
+            pointBorderColor: '#fff',
+            pointBorderWidth: 2,
+            pointRadius: 6,
+            pointHoverRadius: 8
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+              labels: {
+                font: {
+                  size: 14
+                }
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              titleColor: '#fff',
+              bodyColor: '#fff',
+              borderColor: 'rgba(75, 192, 192, 1)',
+              borderWidth: 1,
+              cornerRadius: 6,
+              displayColors: true
+            }
+          },
           scales: {
             y: {
               beginAtZero: true,
               title: {
                 display: true,
-                text: 'Kwh'
+                text: 'Kwh',
+                font: {
+                  size: 14,
+                  weight: 'bold'
+                }
+              },
+              ticks: {
+                font: {
+                  size: 12
+                }
+              },
+              grid: {
+                color: 'rgba(0, 0, 0, 0.1)',
+                drawBorder: false
               }
             },
             x: {
               title: {
                 display: true,
-                text: 'Bulan'
+                text: 'Bulan',
+                font: {
+                  size: 14,
+                  weight: 'bold'
+                }
+              },
+              ticks: {
+                font: {
+                  size: 12
+                }
+              },
+              grid: {
+                color: 'rgba(0, 0, 0, 0.1)',
+                drawBorder: false
               }
+            }
+          },
+          interaction: {
+            intersect: false,
+            mode: 'index'
+          },
+          elements: {
+            line: {
+              borderWidth: 3
             }
           }
         }
       });
+
+      console.log('Chart created successfully');
+    } else {
+      console.error('Canvas element not found');
     }
   });
 </script>

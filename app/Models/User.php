@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\HasApiTokens;
 
 class User extends Authenticatable
 {
@@ -22,6 +24,7 @@ class User extends Authenticatable
         'nama_lengkap',
         'email',
         'password',
+        'profile_photo_path'
     ];
 
     /**
@@ -45,5 +48,14 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function interaksis()
+    {
+        return $this->hasMany(Interaksi::class);
+    }
+    public function jadwalKunjungans()
+    {
+        return $this->hasMany(JadwalKunjungan::class);
     }
 }
