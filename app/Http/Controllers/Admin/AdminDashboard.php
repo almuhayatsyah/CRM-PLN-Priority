@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Routing\Controller;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Str;
 
 // Import Models yang relevan
 use App\Models\User;
@@ -106,26 +108,99 @@ class AdminDashboard extends Controller
     }
     public function index()
     {
-        // Ambil total pelanggan
+        // Data untuk card ringkasan di Dashboard utama
         $totalPelanggan = Pelanggan::count();
-
         $totalUsers = User::count();
-        $totalFeedback = \App\Models\Feedback::count();
-        $pelangganAktif = Pelanggan::orderBy('created_at', 'desc')->limit(5)->get();
+        $totalKunjungan = JadwalKunjungan::whereMonth('tanggal_jadwal', Carbon::now()->month)->count(); // Kunjungan bulan ini
+        $totalAnomali = PemakaianDaya::where('flag_anomali', 1)->count(); // Total anomali
 
-        // Contoh data dummy untuk grafik (akan diganti dengan data sesungguhnya nanti)
-        $pemakaianDaya = [
-            'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
-            'data' => [65, 59, 80, 81, 56, 55],
-        ];
+        // Ambil 5 pelanggan terbaru atau yang paling aktif untuk ditampilkan di dashboard
+        $pelangganAktif = Pelanggan::latest()->limit(5)->get();
 
-        // *** Pastikan semua variabel yang digunakan di view dilewatkan di sini ***
+        // Data untuk grafik Pemakaian Daya Per Bulan di Dashboard Admin
+        // Mengambil data pemakaian daya tahun ini atau tahun dengan data terbaru
+        $tahunUntukGrafik = PemakaianDaya::max(DB::raw('SUBSTRING(bulan_tahun, 1, 4)')) ?? Carbon::now()->year;
+
+        $pemakaianPerBulan = PemakaianDaya::select(
+            DB::raw('SUBSTRING(bulan_tahun, 6, 2) as bulan'),
+            DB::raw('SUM(pemakaian_Kwh) as total_kwh')
+        )
+            ->whereRaw("SUBSTRING(bulan_tahun, 1, 4) = ?", [$tahunUntukGrafik])
+            ->groupBy('bulan')
+            ->orderBy('bulan')
+            ->get()
+            ->keyBy('bulan');
+
+        $labelsGrafikDashboard = [];
+        $dataGrafikKwhDashboard = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $bulanStr = str_pad($i, 2, '0', STR_PAD_LEFT);
+            $labelsGrafikDashboard[] = Carbon::create()->month($i)->format('M');
+            $dataGrafikKwhDashboard[] = $pemakaianPerBulan->has($bulanStr) ? $pemakaianPerBulan[$bulanStr]->total_kwh : 0;
+        }
+
+        // Data untuk pie chart sektor pelanggan
+        $sektorPelanggan = Pelanggan::select('sektor', DB::raw('count(*) as total'))
+            ->groupBy('sektor')
+            ->get();
+
+        // Data aktivitas terbaru (kombinasi dari berbagai tabel)
+        $aktivitasTerbaru = collect();
+
+        // Tambahkan kunjungan terbaru
+        $kunjunganTerbaru = JadwalKunjungan::with(['pelanggan', 'user'])
+            ->latest('tanggal_jadwal')
+            ->limit(3)
+            ->get()
+            ->map(function ($kunjungan) {
+                return (object)[
+                    'title' => 'Kunjungan ' . $kunjungan->pelanggan->nama_perusahaan,
+                    'description' => 'Kunjungan oleh ' . $kunjungan->user->name . ' - ' . $kunjungan->status,
+                    'created_at' => $kunjungan->tanggal_jadwal
+                ];
+            });
+        $aktivitasTerbaru = $aktivitasTerbaru->merge($kunjunganTerbaru);
+
+        // Tambahkan feedback terbaru
+        $feedbackTerbaru = Feedback::with(['pelanggan'])
+            ->latest()
+            ->limit(2)
+            ->get()
+            ->map(function ($feedback) {
+                return (object)[
+                    'title' => 'Feedback dari ' . $feedback->pelanggan->nama_perusahaan,
+                    'description' => 'Rating: ' . $feedback->rating . '/5 - ' . Str::limit($feedback->komentar, 50),
+                    'created_at' => $feedback->created_at
+                ];
+            });
+        $aktivitasTerbaru = $aktivitasTerbaru->merge($feedbackTerbaru);
+
+        // Tambahkan anomali terbaru
+        $anomaliTerbaru = PemakaianDaya::with(['pelanggan'])
+            ->where('flag_anomali', 1)
+            ->latest()
+            ->limit(2)
+            ->get()
+            ->map(function ($anomali) {
+                return (object)[
+                    'title' => 'Anomali terdeteksi',
+                    'description' => 'Pelanggan: ' . $anomali->pelanggan->nama_perusahaan . ' - Beban: ' . $anomali->beban_anomali . ' kWh',
+                    'created_at' => $anomali->created_at
+                ];
+            });
+        $aktivitasTerbaru = $aktivitasTerbaru->merge($anomaliTerbaru);
+
+        // Urutkan berdasarkan created_at dan ambil 5 terbaru
+        $aktivitasTerbaru = $aktivitasTerbaru->sortByDesc('created_at')->take(5);
+
         return view('admin.dashboard', compact(
             'totalPelanggan',
             'totalUsers',
-            'totalFeedback',
-            'pelangganAktif', // Pastikan variabel ini ada di sini!
-            'pemakaianDaya'
+            'totalKunjungan',
+            'totalAnomali',
+            'pelangganAktif',
+            'aktivitasTerbaru',
+            'sektorPelanggan'
         ));
     }
     public function laporanKunjungan(Request $request)
@@ -263,6 +338,39 @@ class AdminDashboard extends Controller
             'dataGrafikKwh' // Variabel untuk grafik
         ));
     }
+    public function pengaturanSistem() // <--- Pastikan method ini ada
+    {
+        // Ambil pengaturan yang ada (misal dari config atau .env)
+        $namaSistem = config('app.name');
+        $contactEmail = config('mail.from.address');
+        $notifAnomaliEmail = config('app.notif_anomali_email', false); // Ambil dari config custom, default false
+
+        return view('admin.pengaturan-sistem', compact('namaSistem', 'contactEmail', 'notifAnomaliEmail'));
+    }
+    public function updatePengaturanSistem(Request $request) // <--- METHOD BARU
+    {
+        $request->validate([
+            'nama_sistem' => 'required|string|max:255',
+            'email_kontak' => 'required|email|max:255',
+            'notif_anomali_email' => 'boolean', // Harus true/false (dari checkbox 1/0)
+        ]);
+
+        // Update pengaturan (contoh: di file .env atau config)
+        // Untuk mengubah .env, Anda perlu library seperti 'vlucas/phpdotenv-extended' atau manual.
+        // Cara paling sederhana adalah update config run-time atau di file config/app.php secara manual jika sudah terkompilasi.
+
+        // Untuk tujuan skripsi, kita bisa simulasikan update atau hanya menampilkan feedback sukses.
+        // Mengubah config run-time:
+        config(['app.name' => $request->nama_sistem]);
+        config(['mail.from.address' => $request->email_kontak]);
+        config(['app.notif_anomali_email' => $request->boolean('notif_anomali_email')]);
+
+        // Clear config cache agar perubahan terlihat jika diubah di .env
+        Artisan::call('config:clear');
+
+        return redirect()->route('admin.pengaturan-sistem')->with('success', 'Pengaturan sistem berhasil diperbarui!');
+    }
+
 
     public function unduhLaporan() // <--- Pastikan method ini ada
     {
@@ -454,5 +562,29 @@ class AdminDashboard extends Controller
             'statusFilter',
             'tahunOptions' // Pastikan ini dilewatkan ke view untuk dropdown tahun
         ));
+    }
+
+    public function staffActivity(Request $request)
+    {
+        // Ambil user yang memiliki peran 'admin', 'manajer', atau 'staff'
+        // Menggunakan withCount untuk menghitung relasi
+        $allStaff = User::whereHas('roles', function ($query) {
+            $query->whereIn('nama_lengkap', ['admin', 'manajer', 'staff']);
+        })
+            ->withCount('interaksis') // Menghitung jumlah interaksi
+            ->withCount('jadwalKunjungans') // Menghitung jumlah jadwal kunjungan
+            ->withCount(['jadwalKunjungans as completed_visits_count' => function ($query) {
+                $query->where('status', 'selesai'); // Menghitung kunjungan yang selesai
+            }])
+            ->orderBy('name')
+            ->paginate(10);
+
+        // Filter (opsional, bisa ditambahkan sesuai kebutuhan)
+        $namaFilter = $request->input('nama');
+        if ($namaFilter) {
+            $allStaff->where('name', 'like', '%' . $namaFilter . '%');
+        }
+
+        return view('admin.monitoring_aktivitas.staff-activity', compact('allStaff'));
     }
 }

@@ -99,12 +99,12 @@
         <table class="table table-bordered table-sm" width="100%" cellspacing="0">
           <thead>
             <tr>
-              <th>#</th>
+              <th>No</th>
               <th>Pelanggan</th>
               <th>Skor</th>
               <th>Komentar</th>
               <th>Status</th>
-              <th>Tanggal Masuk</th>
+              <th>Tanggal dan waktu Masuk</th>
             </tr>
           </thead>
           <tbody>

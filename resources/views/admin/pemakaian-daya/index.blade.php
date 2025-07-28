@@ -1,6 +1,44 @@
 @extends('layouts.app')
 
 @section('content')
+<style>
+  /* Custom CSS untuk pagination sederhana */
+  .pagination {
+    margin-bottom: 0;
+  }
+
+  .pagination-sm .page-link {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    border-radius: 0.2rem;
+  }
+
+  .pagination .page-item.active .page-link {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: white;
+  }
+
+  .pagination .page-item .page-link {
+    color: #0d6efd;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+  }
+
+  .pagination .page-item .page-link:hover {
+    color: #0a58ca;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+  }
+
+  .pagination .page-item.active .page-link:hover {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: white;
+  }
+</style>
+
 <div class="container-fluid">
   <h1 class="mt-4">Daftar Pemakaian Daya Pelanggan</h1>
   <ol class="breadcrumb mb-4">
@@ -124,7 +162,20 @@
           </tbody>
         </table>
         <div class="d-flex justify-content-center">
-          {{ $pemakaianDayas->links() }}
+          @if($pemakaianDayas->hasPages())
+          <nav aria-label="Page navigation">
+            <ul class="pagination pagination-sm">
+              {{-- Hanya tampilkan nomor halaman, tanpa Previous/Next --}}
+              @for ($i = 1; $i <= $pemakaianDayas->lastPage(); $i++)
+                <li class="page-item {{ $i == $pemakaianDayas->currentPage() ? 'active' : '' }}">
+                  <a class="page-link" href="{{ $pemakaianDayas->url($i) }}&{{ http_build_query(request()->except('page')) }}">
+                    {{ $i }}
+                  </a>
+                </li>
+                @endfor
+            </ul>
+          </nav>
+          @endif
         </div>
       </div>
     </div>

@@ -22,7 +22,8 @@ class Pelanggan extends Model
         'up3',
         'ulp',
         'kriteria_prioritas',
-        'user_id'
+        'user_id',
+        'profile_photo_path'
     ];
 
     // ENUM options for sektor

@@ -41,6 +41,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('admin/laporan/kunjungan', [AdminDashboard::class, 'laporanKunjungan'])->name('admin.laporan.kunjungan');
     Route::get('admin/laporan/feedback', [AdminDashboard::class, 'laporanFeedback'])->name('admin.laporan.feedback');
     Route::get('admin/laporan/pemakaian-daya', [AdminDashboard::class, 'laporanPemakaianDaya'])->name('admin.laporan.pemakaian-daya');
+    Route::get('admin/laporan/test-chart', function () {
+        return view('admin.laporan.test-chart');
+    })->name('admin.laporan.test-chart');
     Route::get('admin/laporan/unduh', [AdminDashboard::class, 'unduhLaporan'])->name('admin.laporan.unduh'); // Rute untuk menampilkan form unduh
 
     // PENTING: Tambahkan Rute POST untuk memproses unduh laporan
@@ -48,10 +51,8 @@ Route::middleware(['auth'])->group(function () {
 
     // Pengaturan Sistem
     Route::get('admin/pengaturan-sistem', [AdminDashboard::class, 'pengaturanSistem'])->name('admin.pengaturan-sistem');
+    Route::post('admin/pengaturan-sistem', [AdminDashboard::class, 'updatePengaturanSistem'])->name('admin.pengaturan-sistem.update'); // <-- TAMBAHKAN INI
 
-
-    // RUTE UNTUK MODUL YANG DIPAKAI BERSAMA
-    // PENTING: Rute spesifik (seperti export) HARUS di atas resource yang lebih umum untuk Controller yang sama.
     Route::get('admin/pelanggan/export-pdf', [PelangganController::class, 'exportPdf'])->name('admin.pelanggan.exportPdf');
     Route::get('admin/pelanggan/export-excel', [PelangganController::class, 'exportExcel'])->name('admin.pelanggan.exportExcel');
     // Resource route untuk Pelanggan (harus di bawah rute export spesifiknya)

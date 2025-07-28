@@ -11,6 +11,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\PelangganExport;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Storage;
 
 class PelangganController extends Controller
 {
@@ -52,6 +53,7 @@ class PelangganController extends Controller
             'up3' => 'required',
             'ulp' => 'required',
             'kriteria_prioritas' => 'required',
+            'profile_photo' => 'nullable|image|max:2048',
 
             // Khusus untuk user
             'nama_lengkap' => 'required',

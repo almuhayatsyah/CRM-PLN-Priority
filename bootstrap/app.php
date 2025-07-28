@@ -11,9 +11,7 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->web(append: [
-            // Biarkan middleware web default Laravel di sini, JANGAN tambahkan Spatie RoleMiddleware di sini
-        ]);
+        $middleware->web(append: []);
 
         // INI PENTING: Daftarkan alias untuk middleware Spatie
         $middleware->alias([
