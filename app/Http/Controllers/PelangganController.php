@@ -13,6 +13,7 @@ use App\Exports\PelangganExport;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 
+
 class PelangganController extends Controller
 {
 
@@ -27,7 +28,13 @@ class PelangganController extends Controller
     // Tampilkan semua pelanggan
     public function index()
     {
-        $pelanggan = Pelanggan::paginate(10); // atau jumlah per halaman yang kamu inginkan
+        $pelanggan = Pelanggan::paginate(10);
+
+        if (auth()->user()->hasRole('manajer')) {
+            return view('manajer.pelanggan.index', compact('pelanggan'));
+        } elseif (auth()->user()->hasRole('staff')) {
+            return view('staff.pelanggan.index', compact('pelanggan'));
+        }
 
         return view('admin.pelanggan.index', compact('pelanggan'));
     }
@@ -77,7 +84,7 @@ class PelangganController extends Controller
 
         Pelanggan::create($pelangganData);
 
-        return redirect()->route('admin.pelanggan.index')->with('success', 'Pelanggan & user berhasil ditambahkan!');
+        return redirect()->route('admin.pelanggan.index', ['id' => $pelangganData['user_id']])->with('success', 'Pelanggan & user berhasil ditambahkan!');
     }
 
     // Tampilkan detail pelanggan
