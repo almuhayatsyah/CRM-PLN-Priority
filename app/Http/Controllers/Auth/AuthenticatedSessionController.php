@@ -33,7 +33,7 @@ class AuthenticatedSessionController extends Controller
             return redirect()->intended(route('admin.dashboard'));
         } elseif ($user->hasRole('manajer')) {
             // Ganti dengan route dashboard manajer jika ada
-            return redirect()->intended('/manajer/dashboard');
+            return redirect()->intended(route('manajer.dashboard'));
         } elseif ($user->hasRole('staff')) {
             // Ganti dengan route dashboard staff jika ada
             return redirect()->intended('/staff/dashboard');
